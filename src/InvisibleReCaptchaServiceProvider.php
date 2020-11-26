@@ -15,8 +15,8 @@ class InvisibleReCaptchaServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->bootConfig();
-        $this->app['validator']->extend('captcha', function ($attribute, $value) {
-            return $this->app['captcha']->verifyResponse($value, $this->app['request']->getClientIp());
+        $this->app['validator']->extend('invcaptcha', function ($attribute, $value) {
+            return $this->app['invcaptcha']->verifyResponse($value, $this->app['request']->getClientIp());
         });
     }
 
@@ -27,11 +27,11 @@ class InvisibleReCaptchaServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('captcha', function ($app) {
+        $this->app->singleton('invcaptcha', function ($app) {
             return new InvisibleReCaptcha(
-                $app['config']['captcha.siteKey'],
-                $app['config']['captcha.secretKey'],
-                $app['config']['captcha.options']
+                $app['config']['invcaptcha.siteKey'],
+                $app['config']['invcaptcha.secretKey'],
+                $app['config']['invcaptcha.options']
             );
         });
 
@@ -47,12 +47,12 @@ class InvisibleReCaptchaServiceProvider extends ServiceProvider
      */
     protected function bootConfig()
     {
-        $path = __DIR__.'/config/captcha.php';
+        $path = __DIR__.'/config/invcaptcha.php';
 
-        $this->mergeConfigFrom($path, 'captcha');
+        $this->mergeConfigFrom($path, 'invcaptcha');
 
         if (function_exists('config_path')) {
-            $this->publishes([$path => config_path('captcha.php')]);
+            $this->publishes([$path => config_path('invcaptcha.php')]);
         }
     }
 
@@ -63,7 +63,7 @@ class InvisibleReCaptchaServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['captcha'];
+        return ['invcaptcha'];
     }
 
     /**
@@ -72,17 +72,17 @@ class InvisibleReCaptchaServiceProvider extends ServiceProvider
      */
     public function addBladeDirective(BladeCompiler $blade)
     {
-        $blade->directive('captcha', function ($lang) {
-            return "<?php echo app('captcha')->render({$lang}); ?>";
+        $blade->directive('invcaptcha', function ($lang) {
+            return "<?php echo app('invcaptcha')->render({$lang}); ?>";
         });
         $blade->directive('captchaPolyfill', function () {
-            return "<?php echo app('captcha')->renderPolyfill(); ?>";
+            return "<?php echo app('invcaptcha')->renderPolyfill(); ?>";
         });
         $blade->directive('captchaHTML', function () {
-            return "<?php echo app('captcha')->renderCaptchaHTML(); ?>";
+            return "<?php echo app('invcaptcha')->renderCaptchaHTML(); ?>";
         });
         $blade->directive('captchaScripts', function ($lang) {
-            return "<?php echo app('captcha')->renderFooterJS({$lang}); ?>";
+            return "<?php echo app('invcaptcha')->renderFooterJS({$lang}); ?>";
         });
     }
 }

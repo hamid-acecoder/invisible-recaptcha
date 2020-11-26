@@ -107,7 +107,7 @@ class InvisibleReCaptcha
     }
 
     /**
-     * Render the captcha HTML.
+     * Render the invcaptcha HTML.
      *
      * @return string
      */
